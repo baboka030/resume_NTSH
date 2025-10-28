@@ -1,1 +1,38 @@
+import requests
 
+def Chatgpt_response(prompt):
+    # 你的 OpenAI API 金鑰
+    api_key = "你的_API_金鑰"  # ← 改成你的實際 key
+
+    # OpenAI 官方 API endpoint（如果你用 Azure，需換成自己的 endpoint）
+    open_ai_endpoint = "https://api.openai.com/v1/chat/completions"
+
+    # 設定請求標頭
+    headers = {
+        "Content-Type": "application/json",
+        "Authorization": f"Bearer {api_key}"
+    }
+
+    # 準備請求內容
+    payload = {
+        "model": "gpt-4o-mini",  # 建議用這個或 gpt-4o，也可改成 o1-mini
+        "messages": [
+            {"role": "user", "content": prompt}
+        ],
+        "max_completion_tokens": 1000,
+        "top_p": 1.0,
+        "frequency_penalty": 0.0,
+        "presence_penalty": 0.0
+    }
+
+    # 發送請求
+    response = requests.post(open_ai_endpoint, headers=headers, json=payload)
+
+    # 檢查是否成功
+    if response.status_code == 200:
+        result = response.json()
+        # 取出模型回覆內容
+        return result["choices"][0]["message"]["content"].strip()
+    else:
+        # 印出錯誤訊息
+        return f"Error {response.status_code}: {response.text}"
